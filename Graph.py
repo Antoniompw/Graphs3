@@ -1,3 +1,6 @@
+import queue
+
+
 class DiGraph:
     def __init__(self):
         self.Vertexes = []
@@ -5,12 +8,21 @@ class DiGraph:
     class Vertex:
         def __init__(self, info):
             self.info = info
+            self.mark = False
             self.links = []
 
         class Link:
             def __init__(self, to, cost):
                 self.cost = cost
                 self.to = to
+
+    def demark(self):
+        for i in self.Vertexes:
+            i.mark = False
+
+    def mark_all(self):
+        for i in self.Vertexes:
+            i.mark = True
 
     def add_vertex(self, info):
         for vertex in self.Vertexes:
@@ -74,17 +86,16 @@ class DiGraph:
 
     def lista_de_adjacencias(self):
         for vertex in self.Vertexes:
-            print("\nAresta: " + str(vertex.info))
+            print("Aresta: " + str(vertex.info))
             for link in vertex.links:
                 print("|| Identificador da aresta ligada: " + str(link.to.info), end=" ")
-                print("Custo: " + str(link.cost), end=" || ")
-        print()
+                print("Custo: " + str(link.cost), end=" || \n")
 
     def matriz_de_adjacencias(self):
         for vertex in self.Vertexes:
             print("  "+vertex.info, end="")
         for vertex in self.Vertexes:
-            print("\n\n"+vertex.info, end=" ")
+            print("\n"+vertex.info, end=" ")
             for vertex_2 in self.Vertexes:
                 found = False
                 for link in vertex.links:
@@ -93,9 +104,57 @@ class DiGraph:
                         found = True
                 if not found:
                     print(end="   ")
+        print()
 
+    def busca_em_largura(self, key):
+        fila = queue.Queue()
+        if len(self.Vertexes) > 0:
+            first = self.Vertexes[0]
+            first.mark = True
+            fila.put(first)
+            print(first.info, end=" => ")
+            # Enquanto a fila estiver cheia, visite todos os links e coloque na fila
+            while not fila.empty():
+                # Tira o primeiro da fila
+                vertex = fila.get()
+                for link in vertex.links:
+                    current_vertex = link.to
+                    print(current_vertex.info, end=" => ")
 
-'''
+                    # Se nao tiver sido visitado, marque e visite o vertice
+                    if not current_vertex.mark:
+                        fila.put(current_vertex)
+                        current_vertex.mark = True
+                    # Se for encontrado
+                    if current_vertex.info == key:
+                        self.demark()
+                        print()
+                        return
+
+    def busca_em_profundidade(self, key):
+        if len(self.Vertexes) > 0:
+            vertex = self.Vertexes[0]
+            stack = []
+            stack.append(vertex)
+            vertex.mark = True
+            print(vertex.info, end=" => ")
+            while vertex is not None:
+                item_pushed = False
+                for link in vertex.links:
+                    # Se ele nao tiver sido marcado
+                    if not link.to.mark:
+                        item_pushed = True
+                        vertex = link.to
+                        vertex.mark = True
+                        stack.append(vertex)
+                        print(vertex.info, end=" => ")
+                        if vertex.info == key:
+                            return
+                        break
+                if not item_pushed:
+                    vertex = stack.pop()
+
+"""
 class Graph:
 
     def __init__(self):
@@ -129,10 +188,18 @@ class Graph:
                 if a is not None:
                     a.links.append(a.Link(self.b, cost))
 '''
-
-
 if __name__ == '__main__':
     di_graph = DiGraph()
     di_graph.add_bulk("test.txt")
+
+    print("Lista de adjacencias:")
     di_graph.lista_de_adjacencias()
+
+    print("Matriz de adjacencias:")
     di_graph.matriz_de_adjacencias()
+
+    print("Busca em largura por Z:")
+    di_graph.busca_em_largura("Z")
+
+    print("Busca em profundidade por Z:")
+    di_graph.busca_em_profundidade("Z")
