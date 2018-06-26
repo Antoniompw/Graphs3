@@ -134,8 +134,7 @@ class DiGraph:
     def busca_em_profundidade(self, key):
         if len(self.Vertexes) > 0:
             vertex = self.Vertexes[0]
-            stack = []
-            stack.append(vertex)
+            stack = [vertex]
             vertex.mark = True
             print(vertex.info, end=" => ")
             while vertex is not None:
@@ -143,18 +142,19 @@ class DiGraph:
                 for link in vertex.links:
                     # Se ele nao tiver sido marcado
                     if not link.to.mark:
-                        item_pushed = True
                         vertex = link.to
                         vertex.mark = True
                         stack.append(vertex)
+                        item_pushed = True
                         print(vertex.info, end=" => ")
                         if vertex.info == key:
+                            self.demark()
                             return
                         break
                 if not item_pushed:
                     vertex = stack.pop()
 
-"""
+'''
 class Graph:
 
     def __init__(self):
