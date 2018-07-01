@@ -1,6 +1,6 @@
 import queue
 
-
+# Rather strange graph
 class DiGraph:
     def __init__(self):
         self.Vertexes = []
@@ -149,45 +149,37 @@ class DiGraph:
                         print(vertex.info, end=" => ")
                         if vertex.info == key:
                             self.demark()
+                            print()
                             return
                         break
                 if not item_pushed:
                     vertex = stack.pop()
 
-'''
-class Graph:
 
-    def __init__(self):
-        self.Vertexes = []
+    '''
+    def floyd_warshall(self):
+        v = len(self.Vertexes)
+        dist = {{vertex.info for vertex in self.Vertexes} for vertex in range(self.Vertexes)}
+        for vertex in self.Vertexes:
+            dist[vertex.info][vertex.info] = 0
+    '''
 
-    class Vertex:
-        def __init__(self, info):
-            self.info = info
-            self.links = []
+    def floyd_warshall(self):
+        v = len(self.Vertexes)
+        dist = [[99999 for col in range(v)] for row in range(v)]
+        for i in range(v):
+            dist[i][i] = 0
+        for vertex, index in zip(self.Vertexes, range(v)):
+            for link in vertex.links:
+                to_index = self.Vertexes.index(link.to)
+                dist[index][to_index] = link.cost
+        for k in range(v):
+            for i in range(v):
+                for j in range(v):
+                    if dist[i][j] > dist[i][k] + dist[k][j]:
+                        dist[i][j] = dist[i][k] + dist[k][j]
+        return dist
 
-        class Link:
-            def __init__(self, to, cost):
-                self.cost = cost
-                self.to = to
-
-    def add_node(self, info):
-        self.Vertexes.append(self.Vertex(info))
-
-    def add_link(self, info_a, info_b, cost):
-        a = None
-        b = None
-        for Vertex in self.Vertexes:
-            if Vertex.info == info_a:
-                a = Vertex
-                # if they are both found
-                if b is not None:
-                    a.links.append(a.Link(self.b, cost))
-            elif Vertex.info == info_b:
-                b = Vertex
-                # if they are both found
-                if a is not None:
-                    a.links.append(a.Link(self.b, cost))
-'''
 if __name__ == '__main__':
     di_graph = DiGraph()
     di_graph.add_bulk("test.txt")
@@ -203,3 +195,10 @@ if __name__ == '__main__':
 
     print("Busca em profundidade por Z:")
     di_graph.busca_em_profundidade("Z")
+
+    print("Floyd Warshall:")
+    mat = di_graph.floyd_warshall()
+    for vertex in di_graph.Vertexes:
+        print("Vertex: "+vertex.info)
+    for i in mat:
+        print(i)
