@@ -1,4 +1,5 @@
 import queue
+import math
 
 # Rather strange graph
 class DiGraph:
@@ -166,7 +167,7 @@ class DiGraph:
 
     def floyd_warshall(self):
         v = len(self.Vertexes)
-        dist = [[99999 for col in range(v)] for row in range(v)]
+        dist = [[math.inf for col in range(v)] for row in range(v)]
         predecessor = [[None for col in range(v)] for row in range(v)]
 
         for i in range(v):
