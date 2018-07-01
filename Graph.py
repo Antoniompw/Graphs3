@@ -100,7 +100,7 @@ class DiGraph:
                 found = False
                 for link in vertex.links:
                     if link.to.info == vertex_2.info:
-                        print(str(link.cost), end=" ")
+                        print(str(link.cost), end="  ")
                         found = True
                 if not found:
                     print(end="   ")
@@ -213,8 +213,6 @@ class DiGraph:
 
         return path
 
-
-
 if __name__ == '__main__':
     di_graph = DiGraph()
     di_graph.add_bulk("test.txt")
@@ -232,6 +230,6 @@ if __name__ == '__main__':
     di_graph.busca_em_profundidade("B")
 
     print("Floyd Warshall:")
-    mat, predecessor = di_graph.floyd_warshall()
+    dist, predecessor = di_graph.floyd_warshall()
     path = di_graph.floyd_warshall_path("A", "D", predecessor)
     print(path)
