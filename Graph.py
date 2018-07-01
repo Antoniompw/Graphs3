@@ -167,18 +167,53 @@ class DiGraph:
     def floyd_warshall(self):
         v = len(self.Vertexes)
         dist = [[99999 for col in range(v)] for row in range(v)]
+        predecessor = [[None for col in range(v)] for row in range(v)]
+
         for i in range(v):
             dist[i][i] = 0
+
         for vertex, index in zip(self.Vertexes, range(v)):
             for link in vertex.links:
                 to_index = self.Vertexes.index(link.to)
                 dist[index][to_index] = link.cost
+                predecessor[index][to_index] = link.to.info
+
         for k in range(v):
             for i in range(v):
                 for j in range(v):
                     if dist[i][j] > dist[i][k] + dist[k][j]:
                         dist[i][j] = dist[i][k] + dist[k][j]
-        return dist
+                        predecessor[i][j] = predecessor[i][k]
+
+        return dist, predecessor
+
+    def floyd_warshall_path(self, key_1, key_2, predecessor):
+        size = len(self.Vertexes)
+        a = None
+        b = None
+        for vertex, index in zip(self.Vertexes, range(size)):
+            if key_1 == vertex.info:
+                a = vertex
+                a_index = index
+            elif key_2 == vertex.info:
+                b = vertex
+                b_index = index
+
+        if a is None or b is None:
+            return []
+
+        path = [key_1]
+        while a_index != b_index:
+            path_info = predecessor[a_index][b_index]
+            for vertex, index in zip(self.Vertexes, range(len(self.Vertexes))):
+                if vertex.info == path_info:
+                    path_index = index
+            a_index = path_index
+            path.append(path_info)
+
+        return path
+
+
 
 if __name__ == '__main__':
     di_graph = DiGraph()
@@ -191,14 +226,12 @@ if __name__ == '__main__':
     di_graph.matriz_de_adjacencias()
 
     print("Busca em largura por Z:")
-    di_graph.busca_em_largura("Z")
+    di_graph.busca_em_largura("B")
 
     print("Busca em profundidade por Z:")
-    di_graph.busca_em_profundidade("Z")
+    di_graph.busca_em_profundidade("B")
 
     print("Floyd Warshall:")
-    mat = di_graph.floyd_warshall()
-    for vertex in di_graph.Vertexes:
-        print("Vertex: "+vertex.info)
-    for i in mat:
-        print(i)
+    mat, predecessor = di_graph.floyd_warshall()
+    path = di_graph.floyd_warshall_path("A", "D", predecessor)
+    print(path)
